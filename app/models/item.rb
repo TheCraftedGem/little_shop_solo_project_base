@@ -28,10 +28,10 @@ class Item < ApplicationRecord
     discounts.count >= 1
   end
 
-  def apply_discount(amount_purchased)
+  def apply_discount(cart_item_count)
     if check_for_discount
-      if discounts.where("quantity <= #{amount_purchased}").count > 0
-        discount = discounts.where("quantity <= #{amount_purchased}").order(:quantity).reverse
+      if discounts.where("quantity <= #{cart_item_count}").count > 0
+        discount = discounts.where("quantity <= #{cart_item_count}").order(:quantity).reverse
         discount_rate = 1 - discount.first.rate/100.0
         final_price = price * discount_rate
       end
