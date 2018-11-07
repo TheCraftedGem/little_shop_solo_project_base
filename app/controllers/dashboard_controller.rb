@@ -14,7 +14,21 @@ class DashboardController < ApplicationController
       @most_active_buyer = @merchant.top_active_user
       @biggest_order = @merchant.biggest_order
       @top_buyers = @merchant.top_buyers(3)
+      @customer_emails = @merchant.customer_emails
+      @non_customers = @merchant.non_customers
+
+    if params[:type] == "customer_emails"
+      respond_to do |format|
+          format.csv { send_data @customer_emails.to_csv, filename: "customer_emails.csv"}
+        end
+    elsif params[:type] == "non_customers"
+      respond_to do |format|
+          format.csv { send_data @non_customers.to_csv, filename: "potential_customers.csv"}
+        end
+    else
       render :'merchants/show'
+    end
+    
     elsif current_admin?
       @top_3_shipping_states = Order.top_shipping(:state, 3)
       @top_3_shipping_cities = Order.top_shipping(:city, 3)
@@ -24,5 +38,6 @@ class DashboardController < ApplicationController
     else
       render file: 'errors/not_found', status: 404
     end
+    
   end
 end

@@ -123,5 +123,24 @@ RSpec.describe 'Merchant Stats' do
         end
       end
     end
+
+      it 'shows links to download csv files' do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant_1)
+        visit dashboard_path
+  
+        expect(page).to have_content("Download to CSV")
+
+        expect(page).to have_link("Customer Emails")
+        expect(page).to have_link("Download Non Customers Emails")
+  
+        within ('customer_emails')
+        click_on "Customer Emails"
+  
+        visit dashboard_path
+  
+        within ('non_customers')
+        click_on "Download Non Customers Emails"
+
+      end
+    end
   end
-end

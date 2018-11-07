@@ -38,7 +38,7 @@ class Cart
   def grand_total
     total = 0
     Item.where(id: @contents.keys).each do |item|
-      total += (item.price * count_of(item.id))
+      total += (item.apply_discount(count_of(item.id)) * count_of(item.id))    
     end
     total
   end

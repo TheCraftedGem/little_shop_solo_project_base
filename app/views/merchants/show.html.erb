@@ -90,3 +90,15 @@
   <% end %>
   <%= button_to "Upgrade to Merchant", user_path(@merchant), method: :patch, params: { toggle: :role } %> 
 <% end %>
+
+<%if current_user.merchant? %>
+<h3> Download to CSV </h3>
+<div class="customer-emails">
+  <%= link_to "Customer Emails", dashboard_path(format: "csv", type: "customer_emails")%>
+ </div>
+
+<div class="non-customer-emails">
+ <%= link_to "Download Non Customers Emails", dashboard_path(format: "csv", type: "non_customers")%>
+ </div>
+<%end%>
+

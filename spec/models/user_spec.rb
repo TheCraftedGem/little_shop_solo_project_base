@@ -297,5 +297,70 @@ RSpec.describe User, type: :model do
 
       expect(merchant_1.top_buyers(3)).to eq([user_2, user_1, user_3])
     end
+    
+    it ".customer_emails" do
+      user_1 = create(:user, city: 'Denver')
+      user_2 = create(:user, city: 'Houston')
+      user_3 = create(:user, city: 'Atlanta')
+      user_4 = create(:user, city: 'Brooklyn')
+
+      merchant_1, merchant_2 = create_list(:merchant, 2)
+
+      item_1 = create(:item, user: merchant_1)
+      item_2 = create(:item, user: merchant_1)
+      item_3 = create(:item, user: merchant_2)
+
+      order_1 = create(:completed_order, user: user_1)
+      create(:fulfilled_order_item, quantity: 100, price: 10, order: order_1, item: item_1)
+      create(:fulfilled_order_item, quantity: 100, price: 10, order: order_1, item: item_2)
+
+      order_2 = create(:completed_order, user: user_2)
+      create(:fulfilled_order_item, quantity: 1000, price: 10, order: order_2, item: item_1)
+      create(:fulfilled_order_item, quantity: 1000, price: 10, order: order_2, item: item_2)
+
+      order_3 = create(:completed_order, user: user_3)
+      create(:fulfilled_order_item, quantity: 10, price: 10, order: order_3, item: item_1)
+      create(:fulfilled_order_item, quantity: 10, price: 10, order: order_3, item: item_2)
+
+      order_4 = create(:completed_order, user: user_4)
+      create(:fulfilled_order_item, quantity: 10, price: 10, order: order_4, item: item_3)
+      create(:fulfilled_order_item, quantity: 10, price: 10, order: order_4, item: item_3)
+
+      expect(merchant_1.customer_emails).to include(user_1.email)
+      expect(merchant_1.customer_emails).to include(user_2.email)
+      expect(merchant_1.customer_emails).to include(user_3.email)
+
+      expect(merchant_1.customer_emails).to_not include(user_4.email)
+    end
+
+    it ".non_customers" do
+      user_1 = create(:user, city: 'Denver')
+      user_2 = create(:user, city: 'Houston')
+      user_3 = create(:user, city: 'Atlanta')
+
+      merchant_1, merchant_2 = create_list(:merchant, 2)
+
+      item_1 = create(:item, user: merchant_1)
+      item_2 = create(:item, user: merchant_2)
+
+      order_1 = create(:completed_order, user: user_1)
+      create(:fulfilled_order_item, quantity: 100, price: 10, order: order_1, item: item_1)
+
+      order_2 = create(:completed_order, user: user_2)
+      create(:fulfilled_order_item, quantity: 1000, price: 10, order: order_2, item: item_2)
+
+      order_3 = create(:completed_order, user: user_3)
+      create(:fulfilled_order_item, quantity: 10, price: 10, order: order_3, item: item_1)
+
+      expect(merchant_1.non_customers).to include(user_2.email)
+      expect(merchant_1.non_customers).to_not include(user_1.email)
+      expect(merchant_1.non_customers).to_not include(user_3.email)
+
+
+      expect(merchant_2.non_customers).to include(user_1.email)
+      expect(merchant_2.non_customers).to include(user_3.email)
+
+      expect(merchant_2.non_customers).to_not include(user_2.email)
+    end
   end
 end
