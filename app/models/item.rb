@@ -1,4 +1,5 @@
 class Item < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
   belongs_to :user
   has_many :order_items
   has_many :orders, through: :order_items
@@ -34,6 +35,8 @@ class Item < ApplicationRecord
         discount = discounts.where("quantity <= #{amount_purchased}").order(:quantity).reverse
         discount_rate = 1 - discount.first.rate/100.0
         final_price = price * discount_rate
+      else
+        self.price
       end
     else
       self.price

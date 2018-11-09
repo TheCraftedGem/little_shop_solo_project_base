@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   namespace :dashboard do
     resources :orders, only: [:index]
     resources :items, only: [:index]
+
   end
 
 
@@ -32,7 +33,10 @@ Rails.application.routes.draw do
   end
   resources :order_items, only: [:update]
 
-  resources :items, only: [:index, :show]
+  resources :items, only: [:index, :show] do 
+    resources :discounts, only: [:new, :create]
+  end
+
   resources :users, only: [:index, :new, :create, :edit, :show, :update] do 
     resources :orders, only: [:index, :update]
     patch 'enable', to: 'users#update'
